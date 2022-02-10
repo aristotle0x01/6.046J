@@ -39,10 +39,86 @@ class Solution:
     def unmake_move(self, a: [], k: int, n: int):
         return
 
-    # type = 1 for a prefix '{'
-    # type = 2 for a prefix ','
-    # a flatmap is needed in case of '{' or ',*'
     def flatmap(self, start: int):
+        def is_prev_comma(index: int):
+            if 0 <= (index - 1) < self.n and self.expression[index-1] == ',':
+                return True
+            else:
+                return False
+
+        def multiply(res: [], addon: []):
+            if len(res) == 0:
+                res.extend(addon)
+            else:
+                tmp1 = []
+                for r1 in res:
+                    for t1 in addon:
+                        tmp1.append(r1 + t1)
+                res.clear()
+                res.extend(tmp1)
+
+        if start >= self.n:
+            return [], start
+
+        result = []
+        stack = deque()
+        stack.append((self.expression[start], start))
+        start += 1
+        while start < self.n and len(stack) > 0:
+            i = start
+
+            if self.expression[i] == '{':
+                # "{a,b}{c,{d,e}}"
+                # Input: expression = "{{a,z},a{b,c}w,{ab,z}}"
+                array, next_start = self.flatmap(start)
+
+                prefix = ""
+                while len(stack) > 0 and stack[-1][0].isalpha():
+                    prefix = (stack.pop())[0] + prefix
+                postfix = ""
+                j = next_start
+                while j < self.n and self.expression[j].isalpha():
+                    postfix = postfix + self.expression[j]
+                    j += 1
+
+                for p in range(len(array)):
+                    array[p] = prefix + array[p] + postfix
+
+                if i-1 >= 0 and self.expression[i-1] == ',':
+                    result.extend(array)
+                else:
+                    comma_index = i - 1
+                    while comma_index >= 0 and self.expression[comma_index].isalpha():
+                        comma_index = comma_index - 1
+                    if comma_index >= 0 and self.expression[comma_index] == ',':
+                        result.extend(array)
+                    else:
+                        multiply(result, array)
+                start = j
+            elif self.expression[i] == ',':
+                tmp = ""
+                while len(stack) > 0 and stack[-1][0].isalpha():
+                    tmp = (stack.pop())[0] + tmp
+                if len(tmp) > 0:
+                    result.append(tmp)
+
+                start = start + 1
+            elif self.expression[i] == '}':
+                tmp = ""
+                while len(stack) > 0 and stack[-1][0].isalpha():
+                    tmp = tmp + (stack.pop())[0]
+                if len(tmp) > 0:
+                    result.append(tmp)
+
+                start = start + 1
+                break
+            else:
+                stack.append((self.expression[i], i))
+                start += 1
+
+        return result, start
+
+    def flatmap2(self, start: int):
         if start >= self.n:
             return [], start
 
@@ -173,4 +249,4 @@ g = Solution()
 # ["a","aera","aerg","aeria","aern","aero","aeru","aerw","aerx","er","iaera","iaerg","iaeria","iaern","iaero","iaeru","iaerw","iaerx","oera","oerg","oeria","oern","oero","oeru","oerw","oerx","wera","werg","weria","wern","wero","weru","werw","werx","xera","xerg","xeria","xern","xero","xeru","xerw","xerx"]
 # ['a', 'area', 'areg', 'areia', 'aren', 'areo', 'areu', 'arew', 'arex', 'iarea', 'iareg', 'iareia', 'iaren', 'iareo', 'iareu', 'iarew', 'iarex', 'orea', 'oreg', 'oreia', 'oren', 'oreo', 'oreu', 'orew', 'orex', 're', 'wrea', 'wreg', 'wreia', 'wren', 'wreo', 'wreu', 'wrew', 'wrex', 'xrea', 'xreg', 'xreia', 'xren', 'xreo', 'xreu', 'xrew', 'xrex']
 # print(g.braceExpansionII("{a,{a,{x,ia,o},w}er{n,{g,{u,o}},{a,{x,ia,o},w}},er}"))
-print(g.braceExpansionII("{{a,{x,ia,o},w},er,a{x,ia,o}w}"))
+print(g.braceExpansionII("{a,{a,{x,ia,o},w}er{n,{g,{u,o}},{a,{x,ia,o},w}},er}"))

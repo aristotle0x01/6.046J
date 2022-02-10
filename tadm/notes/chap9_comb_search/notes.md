@@ -39,3 +39,7 @@ N-Queens( board[][], N )
 
 ![](https://user-images.githubusercontent.com/2216435/150488692-68c5fc9e-53c1-4b48-b9c6-eee945676e68.png)
 
+
+
+![](https://user-images.githubusercontent.com/2216435/151654511-7d64fdaf-5983-45b0-8ff4-2a5c6b02a942.png)
+
