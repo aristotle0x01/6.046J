@@ -18,3 +18,9 @@
 
 [Dynamic Programming – Coin In a Line Game Problem](https://algorithms.tutorialhorizon.com/dynamic-programming-coin-in-a-line-game-problem/)
 
+
+
+#### 3. longest palindromic sequence
+
+![longest_palin_sequence](https://user-images.githubusercontent.com/2216435/153844025-45abb0cc-45e8-4a54-b7d5-299276286b76.png)
+
