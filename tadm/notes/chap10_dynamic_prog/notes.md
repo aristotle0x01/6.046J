@@ -12,6 +12,8 @@
 
 [Optimal Binary Search Trees](https://www.algorithmsandme.com/optimal-binary-search-trees/)
 
+[Find optimal cost to construct a binary search tree](https://www.techiedelight.com/find-optimal-cost-to-construct-binary-search-tree/)
+
 ![image](https://user-images.githubusercontent.com/2216435/153809917-a3b84b7a-600c-4443-ae42-a1f1d8ff7dba.png)
 
 #### 2. Alternating Coins Game
