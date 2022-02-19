@@ -1,7 +1,6 @@
 from collections import defaultdict
 from heapq import *
 
-# array[1, 2, 3, ...]: the stack
 # hash1(e1, freq): value->latest frequency
 # hash2(freq, heap((pos1, e1), (pos2, e2), (pos3, e3))): freq -> val list with respective position when pushed
 # heap - freq: frequency heap
@@ -9,20 +8,16 @@ from heapq import *
 class FreqStack:
     # Constructor
     def __init__(self):
-        self.stack = []
         self.heap = []
         self.val_freq_map = defaultdict(list)
         self.freq_val_map = defaultdict(list)
 
     def initialize(self):
-        self.stack = []
         self.heap = []
         self.val_freq_map = defaultdict(list)
         self.freq_val_map = defaultdict(list)
 
     def push(self, val: int) -> None:
-        self.stack.append(val)
-
         if val in self.val_freq_map:
             new_freq = self.val_freq_map[val] + 1
         else:
@@ -31,7 +26,7 @@ class FreqStack:
 
         if new_freq in self.freq_val_map:
             tmp_heap = self.freq_val_map[new_freq]
-            new_pos = (len(self.stack)-1)
+            new_pos = (len(self.heap)-1)
             lp, lv = tmp_heap[0]
             # due to pop, there maybe equal position, so just make pos larger if pushed later
             if new_pos <= abs(lp):
@@ -39,31 +34,24 @@ class FreqStack:
             heappush(tmp_heap, (-new_pos, val))
         else:
             tmp_heap = []
-            heappush(tmp_heap, (-(len(self.stack)-1), val))
+            heappush(tmp_heap, (-(len(self.heap)-1), val))
             self.freq_val_map[new_freq] = tmp_heap
 
         heappush(self.heap, -new_freq)
 
     def pop(self) -> int:
-        if len(self.stack) == 0:
+        if len(self.heap) == 0:
             return None
 
         freq = -heappop(self.heap)
         pos_heap = self.freq_val_map[freq]
         pos, val = heappop(pos_heap)
-        pos = -1 * pos
         if len(pos_heap) == 0:
             del self.freq_val_map[freq]
 
         self.val_freq_map[val] = self.val_freq_map[val] - 1
         if self.val_freq_map[val] == 0:
             del self.val_freq_map[val]
-
-        start = min(pos, len(self.stack)-1)
-        for i in range(start, -1, -1):
-            if self.stack[i] == val:
-                self.stack.pop(i)
-                break
 
         return val
 
