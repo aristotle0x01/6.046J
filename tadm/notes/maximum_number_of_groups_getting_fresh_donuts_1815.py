@@ -1,4 +1,5 @@
 # https://leetcode.com/problems/maximum-number-of-groups-getting-fresh-donuts/
+from collections import Counter
 from functools import lru_cache
 
 
@@ -11,6 +12,7 @@ class Solution:
         self.path = []
         self.n = 0
         self.remains = []
+        self.map = {}
 
     def init(self, batchSize: int, groups: list[int]):
         self.batch_size = batchSize
@@ -19,13 +21,62 @@ class Solution:
         self.memo = {}
         self.n = len(groups)
         self.path = [0] * self.n
-        self.remains = groups.copy()
+        self.remains = self.groups.copy()
+        self.map = {}
 
     def get_candidates(self):
         return self.remains
 
-    @lru_cache(None)
+    # test cache effects using self.map
     def backtrack(self, k: int, acc: int, leftover: int):
+        key = str(k) + '_' + str(acc) + '_' + str(leftover)
+        if key in self.map:
+            self.map[key] += 1
+            return
+
+        if k == self.n:
+            if acc > self.max_happy_group_num:
+                self.max_happy_group_num = acc
+            return
+
+        k = k + 1
+        candidates = self.get_candidates()
+        for i in range(len(candidates)):
+            c = candidates[i]
+            if c == 0:
+                continue
+
+            if leftover == 0:
+                t_acc = acc + 1
+            else:
+                t_acc = acc
+
+            # left donuts more than this group of people
+            if leftover >= c:
+                t_leftover = leftover - c
+            else:
+                # the number of needed donuts
+                need = (c - leftover)
+                if self.batch_size >= need:
+                    t_leftover = self.batch_size - need
+                else:
+                    remain = need % self.batch_size
+                    if remain == 0:
+                        t_leftover = 0
+                    else:
+                        t_leftover = self.batch_size - remain
+
+            # why this cache mechanism works
+            # for the same k, there will be many repeated elements
+            self.remains[i] = 0
+            self.backtrack(k, t_acc, t_leftover)
+            self.remains[i] = c
+
+        self.map[key] = 1
+        return
+
+    @lru_cache(None)
+    def backtrack2(self, k: int, acc: int, leftover: int):
         if k == self.n:
             if acc > self.max_happy_group_num:
                 self.max_happy_group_num = acc
@@ -66,6 +117,8 @@ class Solution:
     def maxHappyGroups(self, batchSize: int, groups: list[int]) -> int:
         self.init(batchSize, groups)
         self.backtrack(0, 0, 0)
+        p = [x%batchSize for x in groups]
+        cnt = Counter(p)
         return self.max_happy_group_num
 
     # Recursive function to find the
