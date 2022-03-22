@@ -20,6 +20,7 @@ class Solution:
             dp[i][1] = dp[i - 1][0] * 2 + dp[i - 1][1] * 3
         return (dp[n][0] + dp[n][1])
 
+    # https://www.geeksforgeeks.org/count-number-of-unique-ways-to-paint-a-n-x-3-grid/
     def numOfWays_ref(self, n):
         f = g = 6
         M = 10 ** 9 + 7
@@ -29,6 +30,7 @@ class Solution:
 
     # let red = 1, yellow = 2, green = 3
     # p1,p2,p3 are color value of layer k+1
+    # by local testing, only works when n <= 497, but submitted successfully to leetcode
     @lru_cache(None)
     def recur(self, p1: int, p2: int, p3: int, k: int):
         if k == 0:
@@ -58,6 +60,5 @@ class Solution:
 
 g = Solution()
 n = 497
-print(g.numOfWays_ref2(n))
 print(g.numOfWays_ref(n))
 print(g.numOfWays(n))
